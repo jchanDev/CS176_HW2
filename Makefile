@@ -4,6 +4,9 @@ ARGS = -Wall
 # Compiling all the dependencies
 all: server_c_udp client_c_udp server_c_tcp client_c_tcp
 
+tcp: server_c_tcp client_c_tcp
+udp: server_c_udp client_c_udp
+
 # Server and client programs
 server_c_udp: server_c_udp.c
 	$(CC) $(ARGS) -o server_c_udp server_c_udp.c

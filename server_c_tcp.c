@@ -5,8 +5,9 @@
 #include <string.h> 
 #include <sys/socket.h> 
 #include <sys/types.h> 
+#include <ctype.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 80 
+#define MAX 128 
 #define SA struct sockaddr 
   
 // Function designed for chat between client and server. 
@@ -16,65 +17,35 @@ void func(int connfd)
     int sum = 0;
     // infinite loop for chat 
     for (;;) { 
-        bzero(buff, MAX);
         int bytesRead = read(connfd, buff, sizeof(buff) - 1);
         if (bytesRead <= 0) {
             printf("Client disconnected or read error.\n");
             break;
-        } 
+        }
+
         buff[bytesRead] = '\0'; // Null-terminate the string
-        printf("From client: %s\t", buff);
+        printf("From client: %s\n", buff);
         // Remove any trailing newline
         buff[strcspn(buff, "\n")] = '\0';
+
+        // sum up the numbers in the buffer
+        sum = 0;
+        for (int i = 0; i < strlen(buff); i++) {
+            sum += buff[i] - '0';
+        }
+
+        //bzero(buff, MAX);
         
-        //int notSingleDigit = 1;
-        while(1) {
-            // sum up the numbers in the buffer
-            sum = 0;
-            for (int i = 0; i < strlen(buff); i++) {
-                sum += buff[i] - '0';
-            }
-            //bzero(buff, MAX);
-            printf("Sum: %d\n", sum);
-            // Convert the sum back to a string
-            snprintf(buff, MAX, "%d", sum);
+        printf("Sum: %d\n", sum);
+        // Convert the sum back to a string
+        snprintf(buff, MAX, "%d", sum);
 
             // Check if the buffer contains only one digit
             //notSingleDigit = strlen(buff) > 1;
 
-            // Send the buffer to the client
-            write(connfd, buff, strlen(buff));
-            if (sum < 10) {
-                break;
-            }
-            // // Add each digit in the variable sum to the buffer
-            // int index = 0;
-            // do {
-            //     buff[index++] = (sum % 10) + '0'; // Add the last digit as a character
-            //     sum /= 10; // Remove the last digit
-            // } while (sum > 0);
-
-            // buff[index] = '\0'; // Null-terminate the buffer
-
-            // // Reverse the buffer since digits were added in reverse order
-            // for (int i = 0; i < index / 2; i++) {
-            //     char temp = buff[i];
-            //     buff[i] = buff[index - i - 1];
-            //     buff[index - i - 1] = temp;
-            // }
-
-            // // Check if the buffer contains only one digit
-            // notSingleDigit = strlen(buff) > 1;
-            
-            // // and send that buffer to client 
-            // write(connfd, buff, strlen(buff)); 
-            //bzero(buff, MAX);
-        }
-        // if msg contains "Exit" then server exit and chat ended. 
-        if (strncmp("exit", buff, 4) == 0) { 
-            printf("Server Exit...\n"); 
-            break; 
-        } 
+        // Send the buffer to the client
+        write(connfd, buff, strlen(buff));
+        bzero(buff, sizeof(buff));
 
     } 
 } 
@@ -136,3 +107,10 @@ int main(int argc, char *argv[])
     // After chatting close the socket 
     close(sockfd); 
 }
+
+/* 
+        // if msg contains "Exit" then server exit and chat ended. 
+        if (strncmp("exit", buff, 4) == 0) { 
+            printf("Server Exit...\n"); 
+            break; 
+        }*/

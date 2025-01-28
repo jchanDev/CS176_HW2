@@ -6,52 +6,47 @@
 #include <strings.h> // bzero()
 #include <sys/socket.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 80
-#define PORT 8080
+#define MAX 128
 #define SA struct sockaddr
+
 void func(int sockfd)
 {
     char buff[MAX];
     int n;
     int valid = 0;
     for (;;) {
-        while (!valid) {
-            valid = 1;
             bzero(buff, sizeof(buff));
             printf("Enter the string: ");
             n = 0;
             while ((buff[n++] = getchar()) != '\n')
                 ;
-            //check if everytrhing in buffer is a number
-            for (int i = 0; i < strlen(buff) - 1; i++) {
-                if (!isdigit(buff[i])) {
-                    printf("Must be a number:\n");
-                    valid = 0;
-                }
-            }
-        }
 
-        valid = 0;
         write(sockfd, buff, sizeof(buff));
         bzero(buff, sizeof(buff));
-        int notSingleDigit = 1;
+        
+        bool notSingleDigit = true;
         while (1) {
             int bytesRead = read(sockfd, buff, sizeof(buff) - 1);
             if (bytesRead <= 0) {
                 printf("Server disconnected or read error.\n");
                 break;
             }
+
             buff[bytesRead] = '\0'; // Null-terminate the string
-            printf("From Server: %s\n", buff);
+
             notSingleDigit = strlen(buff) > 1;
             if (!notSingleDigit) {
+                printf("From Server!: %s\n", buff);
+                bzero(buff, sizeof(buff));
+                notSingleDigit = false;
                 break;
             }
-        }
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
+            else {
+                printf("From Server: %s\n", buff);
+                write(sockfd, buff, sizeof(buff));
+            }
         }
     }
 }
@@ -98,3 +93,11 @@ int main(int argc, char *argv[])
     // close the socket
     close(sockfd);
 }
+
+/*
+        if ((strncmp(buff, "exit", 4)) == 0) {
+            printf("Client Exit...\n");
+            break;
+        }
+
+*/
