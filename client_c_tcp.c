@@ -17,12 +17,24 @@ void func(int sockfd)
     int n;
     int valid = 0;
     for (;;) {
+        while (!valid) {
+            valid = 1;
             bzero(buff, sizeof(buff));
             printf("Enter the string: ");
             n = 0;
             while ((buff[n++] = getchar()) != '\n')
                 ;
+            //check if everytrhing in buffer is a number
+            for (int i = 0; i < strlen(buff) - 1; i++) {
+                if (!isdigit(buff[i])) {
+                    printf("Sorry, cannot compute!\n");
+                    valid = 0;
+                    break;
+                }
+            }
+        }
 
+        valid = 0;
         write(sockfd, buff, sizeof(buff));
         bzero(buff, sizeof(buff));
         
