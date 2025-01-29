@@ -27,7 +27,7 @@ void func(int sockfd)
             //check if everytrhing in buffer is a number
             for (int i = 0; i < strlen(buff) - 1; i++) {
                 if (!isdigit(buff[i])) {
-                    printf("Sorry, cannot compute!\n");
+                    printf("From server: Sorry, cannot compute!\n");
                     valid = 0;
                     break;
                 }
@@ -50,13 +50,13 @@ void func(int sockfd)
 
             notSingleDigit = strlen(buff) > 1;
             if (!notSingleDigit) {
-                printf("From Server: %s\n", buff);
+                printf("From server: %s\n", buff);
                 bzero(buff, sizeof(buff));
                 notSingleDigit = false;
                 break;
             }
             else {
-                printf("From Server: %s\n", buff);
+                printf("From server: %s\n", buff);
                 write(sockfd, buff, sizeof(buff));
             }
         }
