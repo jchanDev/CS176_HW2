@@ -38,7 +38,7 @@ void func(int sockfd)
 
             notSingleDigit = strlen(buff) > 1;
             if (!notSingleDigit) {
-                printf("From Server!: %s\n", buff);
+                printf("From Server: %s\n", buff);
                 bzero(buff, sizeof(buff));
                 notSingleDigit = false;
                 break;

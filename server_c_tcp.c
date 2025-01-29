@@ -15,6 +15,7 @@ void func(int connfd)
 { 
     char buff[MAX]; 
     int sum = 0;
+    int check = 0;
     // infinite loop for chat 
     for (;;) { 
         int bytesRead = read(connfd, buff, sizeof(buff) - 1);
@@ -24,7 +25,7 @@ void func(int connfd)
         }
 
         buff[bytesRead] = '\0'; // Null-terminate the string
-        printf("From client: %s\n", buff);
+        // printf("From client: %s\n", buff);
         // Remove any trailing newline
         buff[strcspn(buff, "\n")] = '\0';
 
@@ -32,20 +33,23 @@ void func(int connfd)
         sum = 0;
         for (int i = 0; i < strlen(buff); i++) {
             sum += buff[i] - '0';
+            // printf("test");
+            check = 1;
         }
 
         //bzero(buff, MAX);
         
-        printf("Sum: %d\n", sum);
-        // Convert the sum back to a string
-        snprintf(buff, MAX, "%d", sum);
+        if (check) {
+            printf("Sum: %d\n", sum);
+            // Convert the sum back to a string
+            snprintf(buff, MAX, "%d", sum);
 
-            // Check if the buffer contains only one digit
-            //notSingleDigit = strlen(buff) > 1;
+            // Send the buffer to the client
+            write(connfd, buff, strlen(buff));
+            bzero(buff, sizeof(buff));
+        }
 
-        // Send the buffer to the client
-        write(connfd, buff, strlen(buff));
-        bzero(buff, sizeof(buff));
+        check = 0;
 
     } 
 } 
