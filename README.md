@@ -7,9 +7,10 @@ The code submitted is a client-server implementation in C where the client sends
 There are four code files in total (TCP server, TCP client, UDP server, UDP client). There two connection implementations: one that utilizes TCP and one that utilizes UDP.
 
 An example output would be:  
-csil-machine2> ./client 128.111.49.44 32000  
+csil-machine2> ./server_c_tcp 32000  
+csil-machine2> ./client_c_tcp 128.111.49.44 32000  
 Enter string: 123456789101234567891012345678910  
-From server: 138 
+From server: 138  
 From server: 12  
 From server: 3  
 csil-machine2>  
