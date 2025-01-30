@@ -1,3 +1,4 @@
+//Code based on https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
 #include <stdio.h>
@@ -8,7 +9,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 128
+#define MAX 129
 #define SA struct sockaddr
 
 void func(int sockfd)
@@ -20,15 +21,18 @@ void func(int sockfd)
         while (!valid) {
             valid = 1;
             bzero(buff, sizeof(buff));
-            printf("Enter the string: ");
+            printf("Enter string: ");
             n = 0;
             while ((buff[n++] = getchar()) != '\n')
                 ;
-            //check if everytrhing in buffer is a number
+            //check if everything in buffer is a number
             for (int i = 0; i < strlen(buff) - 1; i++) {
+                if (buff[i] == '\n') continue;
                 if (!isdigit(buff[i])) {
                     printf("From server: Sorry, cannot compute!\n");
                     valid = 0;
+                    close(sockfd);
+                    exit(0);
                     break;
                 }
             }
@@ -53,6 +57,8 @@ void func(int sockfd)
                 printf("From server: %s\n", buff);
                 bzero(buff, sizeof(buff));
                 notSingleDigit = false;
+                close(sockfd);
+                exit(0);
                 break;
             }
             else {
@@ -78,17 +84,14 @@ int main(int argc, char *argv[])
         printf("socket creation failed...\n");
         exit(0);
     }
-    else
-        printf("Socket successfully created..\n");
+    // else
+        //printf("Socket successfully created..\n");
     bzero(&servaddr, sizeof(servaddr));
 
     // assign IP, PORT
     servaddr.sin_family = AF_INET;
-    printf("argv[1]: %s\n", argv[1]);
-    printf("type of argv[1]: %d\n", inet_addr(argv[1]));
     servaddr.sin_addr.s_addr = inet_addr(argv[1]);
     servaddr.sin_port = htons(atoi(argv[2]));
-    printf("argv[2]: %s\n", argv[2]);
 
     // connect the client socket to server socket
     if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr))
@@ -96,8 +99,8 @@ int main(int argc, char *argv[])
         printf("connection with the server failed...\n");
         exit(0);
     }
-    else
-        printf("connected to the server..\n");
+    // else
+        //printf("connected to the server..\n");
 
     // function for chat
     func(sockfd);
