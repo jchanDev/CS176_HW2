@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 129
+#define MAX 256
 #define SA struct sockaddr
 
 void func(int sockfd)

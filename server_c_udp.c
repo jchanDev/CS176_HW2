@@ -6,8 +6,9 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 #include <ctype.h>
+#include <stdbool.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 129 
+#define MAX 256
 #define SA struct sockaddr
   
 // Function designed for chat between client and server. 
@@ -21,10 +22,9 @@ void func(int sockfd)
 
     // infinite loop for chat 
     for (;;) { 
-        // printf("Before recvfrom()\n");
-        // int bytesRead = recvfrom(sockfd, buff, sizeof(buff) - 1, 0, (SA*)&cli, &len);
-        // printf("After recvfrom(), bytesRead = %d\n", bytesRead);
         int bytesRead = recvfrom(sockfd, buff, sizeof(buff) - 1, 0, (SA*)&cli, &len);
+
+        //int bytesRead = recvfrom(sockfd, buff, sizeof(buff) - 1, 0, (SA*)&cli, &len);
         if (bytesRead <= 0) {
             printf("Client disconnected or read error.\n");
             break;
@@ -32,27 +32,56 @@ void func(int sockfd)
 
         buff[bytesRead] = '\0'; // Null-terminate the string
 
-        // sum up the numbers in the buffer
-        sum = 0;
-        for (int i = 0; i < strlen(buff); i++) {
-            if (buff[i] == '\n') {
-                continue;  // Skip the newline character
+        // // sum up the numbers in the buffer
+        // sum = 0;
+        // for (int i = 0; i < strlen(buff); i++) {
+        //     if (buff[i] == '\n') {
+        //         continue;  // Skip the newline character
+        //     }
+        //     sum += buff[i] - '0';
+        //     check = 1;
+        // }
+
+        // if (check) {
+        //     bool notSingleDigit = true;
+        //     notSingleDigit = sum > 9;
+        //     printf("Sum: %d\n", sum);
+        //     // Convert the sum back to a string
+        //     snprintf(buff, MAX, "%d", sum);
+        //     // Send the buffer to the client
+        //     sendto(sockfd, buff, strlen(buff), 0, (SA*)&cli, len);
+        //     bzero(buff, sizeof(buff));
+        // }
+
+        // check = 0;
+        // Clear buffer for response
+        char response[MAX] = "";
+        
+        // Compute repeated digit sums until single digit
+        while (1) {
+            sum = 0;
+            for (int i = 0; i < strlen(buff); i++) {
+                if (isdigit(buff[i])) {  
+                    sum += buff[i] - '0';
+                }
             }
-            sum += buff[i] - '0';
-            check = 1;
-        }
 
-        if (check) {
-            printf("Sum: %d\n", sum);
-            // Convert the sum back to a string
+            // Append intermediate result to response
+            char temp[MAX];
+            snprintf(temp, MAX, "From server: %d\n", sum);
+            strncat(response, temp, MAX - strlen(response) - 1);
+
+            // Stop if sum is a single-digit number
+            if (sum < 10) {
+                break;
+            }
+
+            // Convert sum back to string for next iteration
             snprintf(buff, MAX, "%d", sum);
-
-            // Send the buffer to the client
-            sendto(sockfd, buff, strlen(buff), 0, (SA*)&cli, len);
-            bzero(buff, sizeof(buff));
         }
 
-        check = 0;
+        // Send final result to the client
+        sendto(sockfd, response, strlen(response), 0, (SA*)&cli, len);
     } 
 } 
   

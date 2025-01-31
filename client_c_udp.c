@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 129
+#define MAX 256
 #define SA struct sockaddr
 
 void func(int sockfd, struct sockaddr_in servaddr)
@@ -23,14 +23,23 @@ void func(int sockfd, struct sockaddr_in servaddr)
             bzero(buff, sizeof(buff));
             printf("Enter string: ");
             n = 0;
-            while ((buff[n++] = getchar()) != '\n')
-                ;
+            while ((buff[n++] = getchar()) != '\n');
+            if (buff[n-1] == '\n') {
+                buff[n-1] = '\0';  // Remove the newline character
+            }
+            if (strlen(buff) == 0) {
+                printf("From server: Sorry, cannot compute!\n");
+                valid = 0;
+                continue;   // Prompt for input again
+             }
             //check if everything in buffer is a number
             for (int i = 0; i < strlen(buff) - 1; i++) {
-                if (buff[i] == '\n') continue;
+                //if (buff[i] == '\n') continue;
                 if (!isdigit(buff[i])) {
                     printf("From server: Sorry, cannot compute!\n");
                     valid = 0;
+                    close(sockfd);
+                    exit(0);
                     break;
                 }
             }
@@ -50,17 +59,19 @@ void func(int sockfd, struct sockaddr_in servaddr)
 
             buff[bytesRead] = '\0'; // Null-terminate the string
 
-            notSingleDigit = strlen(buff) > 1;
-            if (!notSingleDigit) {
-                printf("From server: %s\n", buff);
-                bzero(buff, sizeof(buff));
-                notSingleDigit = false;
-                break;
-            }
-            else {
-                printf("From server: %s\n", buff);
-                sendto(sockfd, buff, sizeof(buff), 0, (SA*)&servaddr, len);
-            }
+            // notSingleDigit = strlen(buff) > 1;
+            // if (!notSingleDigit) {
+            //     printf("From server: %s\n", buff);
+            //     bzero(buff, sizeof(buff));
+            //     notSingleDigit = false;
+            //     break;
+            // }
+            // else {
+            //     printf("From server: %s\n", buff);
+            //     sendto(sockfd, buff, sizeof(buff), 0, (SA*)&servaddr, len);
+            // }
+            printf(buff);
+            exit(0);
         }
     }
 }
