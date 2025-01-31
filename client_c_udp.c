@@ -1,4 +1,6 @@
-#include <arpa/inet.h> // inet_addr()
+// Code based on https://www.geeksforgeeks.org/udp-client-server-using-connect-c-implementation/
+// website last updated April 17, 2018
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +8,7 @@
 #include <strings.h> // bzero()
 #include <ctype.h>
 #include <stdbool.h>
-#include <unistd.h> // read(), write(), close()
+#include <unistd.h>
 #define MAX 256
 #define SA struct sockaddr
 
@@ -32,9 +34,9 @@ void func(int sockfd, struct sockaddr_in servaddr)
                 valid = 0;
                 continue;   // Prompt for input again
              }
+
             //check if everything in buffer is a number
             for (int i = 0; i < strlen(buff) - 1; i++) {
-                //if (buff[i] == '\n') continue;
                 if (!isdigit(buff[i])) {
                     printf("From server: Sorry, cannot compute!\n");
                     valid = 0;
@@ -57,19 +59,8 @@ void func(int sockfd, struct sockaddr_in servaddr)
                 break;
             }
 
-            buff[bytesRead] = '\0'; // Null-terminate the string
+            buff[bytesRead] = '\0';
 
-            // notSingleDigit = strlen(buff) > 1;
-            // if (!notSingleDigit) {
-            //     printf("From server: %s\n", buff);
-            //     bzero(buff, sizeof(buff));
-            //     notSingleDigit = false;
-            //     break;
-            // }
-            // else {
-            //     printf("From server: %s\n", buff);
-            //     sendto(sockfd, buff, sizeof(buff), 0, (SA*)&servaddr, len);
-            // }
             printf(buff);
             exit(0);
         }
@@ -91,8 +82,6 @@ int main(int argc, char *argv[])
         printf("socket creation failed...\n");
         exit(0);
     }
-    // else
-    //     printf("Socket successfully created..\n");
     bzero(&servaddr, sizeof(servaddr));
 
     // assign IP, PORT
@@ -100,7 +89,7 @@ int main(int argc, char *argv[])
     servaddr.sin_addr.s_addr = inet_addr(argv[1]);
     servaddr.sin_port = htons(atoi(argv[2]));
 
-    // function for chat
+    // function for sums
     func(sockfd, servaddr);
 
     // close the socket

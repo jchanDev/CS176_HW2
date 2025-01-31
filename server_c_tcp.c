@@ -1,4 +1,5 @@
-//Code based on https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+// Code based on https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+// website last updated January 10, 2025
 #include <stdio.h> 
 #include <netdb.h> 
 #include <netinet/in.h> 
@@ -7,17 +8,17 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 #include <ctype.h>
-#include <unistd.h> // read(), write(), close()
+#include <unistd.h>
 #define MAX 256
 #define SA struct sockaddr 
   
-// Function designed for chat between client and server. 
+// Function designed for commmunication between client and server. 
 void func(int connfd) 
 { 
     char buff[MAX]; 
     int sum = 0;
     int check = 0;
-    // infinite loop for chat 
+
     for (;;) { 
         int bytesRead = read(connfd, buff, sizeof(buff) - 1);
         if (bytesRead <= 0) {
@@ -61,8 +62,6 @@ int main(int argc, char *argv[])
         printf("socket creation failed...\n"); 
         exit(0); 
     } 
-    // else
-    //     printf("Socket successfully created..\n"); 
     bzero(&servaddr, sizeof(servaddr)); 
   
     // assign IP, PORT 
@@ -75,19 +74,14 @@ int main(int argc, char *argv[])
         printf("socket bind failed...\n"); 
         exit(0); 
     } 
-    // else
-    //     printf("Socket successfully binded..\n"); 
   
-    // Now server is ready to listen and verification 
     if ((listen(sockfd, 5)) != 0) { 
         printf("Listen failed...\n"); 
         exit(0); 
     } 
-    // else
-    //     printf("Server listening..\n"); 
+
     len = sizeof(cli); 
 
-    // Continuously accept new clients
     while (1) {
         // Accept the data packet from client and verification 
         connfd = accept(sockfd, (SA*)&cli, &len); 
@@ -95,10 +89,8 @@ int main(int argc, char *argv[])
             printf("server accept failed...\n"); 
             exit(0); 
         } 
-        // else
-        //     printf("server accept the client...\n"); 
 
-        // Handle the client request
+        // Handle the sums
         func(connfd); 
 
         // After handling the client, close the connection and wait for the next client

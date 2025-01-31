@@ -1,3 +1,5 @@
+// Code based on https://www.geeksforgeeks.org/udp-client-server-using-connect-c-implementation/
+// website last updated April 17, 2018
 #include <stdio.h> 
 #include <netdb.h> 
 #include <netinet/in.h> 
@@ -7,7 +9,7 @@
 #include <sys/types.h> 
 #include <ctype.h>
 #include <stdbool.h>
-#include <unistd.h> // read(), write(), close()
+#include <unistd.h>
 #define MAX 256
 #define SA struct sockaddr
   
@@ -31,29 +33,6 @@ void func(int sockfd)
         }
 
         buff[bytesRead] = '\0'; // Null-terminate the string
-
-        // // sum up the numbers in the buffer
-        // sum = 0;
-        // for (int i = 0; i < strlen(buff); i++) {
-        //     if (buff[i] == '\n') {
-        //         continue;  // Skip the newline character
-        //     }
-        //     sum += buff[i] - '0';
-        //     check = 1;
-        // }
-
-        // if (check) {
-        //     bool notSingleDigit = true;
-        //     notSingleDigit = sum > 9;
-        //     printf("Sum: %d\n", sum);
-        //     // Convert the sum back to a string
-        //     snprintf(buff, MAX, "%d", sum);
-        //     // Send the buffer to the client
-        //     sendto(sockfd, buff, strlen(buff), 0, (SA*)&cli, len);
-        //     bzero(buff, sizeof(buff));
-        // }
-
-        // check = 0;
         // Clear buffer for response
         char response[MAX] = "";
         
@@ -101,8 +80,7 @@ int main(int argc, char *argv[])
         printf("socket creation failed...\n"); 
         exit(0); 
     } 
-    // else
-    //     printf("Socket successfully created..\n"); 
+
     bzero(&servaddr, sizeof(servaddr)); 
   
     // assign IP, PORT 
@@ -115,10 +93,8 @@ int main(int argc, char *argv[])
         printf("socket bind failed...\n"); 
         exit(0); 
     } 
-    // else
-    //     printf("Socket successfully binded..\n"); 
   
-    // Function for chatting between client and server 
+    // Function for communication between client and server 
     func(sockfd); 
   
     // After chatting close the socket 

@@ -1,5 +1,6 @@
-//Code based on https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
-#include <arpa/inet.h> // inet_addr()
+// Code based on https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+// website last updated January 10, 2025
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +9,7 @@
 #include <sys/socket.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <unistd.h> // read(), write(), close()
+#include <unistd.h>
 #define MAX 256
 #define SA struct sockaddr
 
@@ -84,8 +85,7 @@ int main(int argc, char *argv[])
         printf("socket creation failed...\n");
         exit(0);
     }
-    // else
-        //printf("Socket successfully created..\n");
+
     bzero(&servaddr, sizeof(servaddr));
 
     // assign IP, PORT
@@ -99,20 +99,10 @@ int main(int argc, char *argv[])
         printf("connection with the server failed...\n");
         exit(0);
     }
-    // else
-        //printf("connected to the server..\n");
 
-    // function for chat
+    // function for sums
     func(sockfd);
 
     // close the socket
     close(sockfd);
 }
-
-/*
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
-        }
-
-*/
